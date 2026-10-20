@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface EmiRepository extends JpaRepository<Emi, Long> {
 
-    List<Emi> findAllByUserId(Long userId);
+    List<Emi> findAllByUserId(String userId);
 
     @Query("select emi from Emi emi where emi.isActive = true and emi.dueDateDay = :dueDateDay")
     List<Emi> findAllActiveByDueDateDay(@Param("dueDateDay") Integer dueDateDay);

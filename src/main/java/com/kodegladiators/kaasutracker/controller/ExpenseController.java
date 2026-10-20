@@ -10,11 +10,12 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,17 +35,19 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<ExpenseResource> create(
-            @RequestParam Long userId,
+            @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody ExpenseDto expenseDto
     ) {
+        String userId = jwt.getSubject();
         ExpenseResource createdExpense = expenseService.create(userId, expenseDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdExpense);
     }
 
     @GetMapping
     public ResponseEntity<List<ExpenseResource>> findAll(
-            @RequestParam Long userId
+            @AuthenticationPrincipal Jwt jwt
     ) {
+        String userId = jwt.getSubject();
         return ResponseEntity.ok(expenseService.findAllByUser(userId));
     }
 

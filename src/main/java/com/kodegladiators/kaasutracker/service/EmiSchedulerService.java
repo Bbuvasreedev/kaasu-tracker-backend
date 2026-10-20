@@ -29,7 +29,7 @@ public class EmiSchedulerService {
         List<Emi> upcomingEmis = emiRepository.findAllActiveByDueDateDay(targetDay);
 
         for (Emi emi : upcomingEmis) {
-            Long userId = emi.getUser().getId();
+            String userId = emi.getUser().getId();
             // Replace this log with FCM/push-notification delivery when that integration is added.
             LOGGER.info(
                     "Reminder: EMI '{}' of {} is due in {} days for User ID: {}",

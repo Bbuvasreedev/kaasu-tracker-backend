@@ -67,7 +67,7 @@
 //
 //    @Test
 //    void versionedApiRequiresAuthentication() throws Exception {
-//        mockMvc.perform(get("/api/v1/expenses").param("userId", "1"))
+//        mockMvc.perform(get("/api/v1/expenses"))
 //                .andExpect(status().isUnauthorized());
 //    }
 //
@@ -75,11 +75,13 @@
 //    @Transactional
 //    void expenseEndpointsCreateListAndAnalyze() throws Exception {
 //        User user = new User();
+//        user.setId(UUID.randomUUID().toString());
 //        user.setEmail(UUID.randomUUID() + "@example.com");
 //        user.setPasswordHash("test-hash");
 //        user = userRepository.saveAndFlush(user);
+//        String userId = user.getId();
 //
-//        String expensesUrl = "/api/v1/expenses?userId=" + user.getId();
+//        String expensesUrl = "/api/v1/expenses";
 //        String request = """
 //                {
 //                  "amount": 42.50,
@@ -93,7 +95,7 @@
 //                """;
 //
 //        var createResult = mockMvc.perform(post(expensesUrl)
-//                        .with(jwt())
+//                        .with(jwt().jwt(token -> token.subject(userId)))
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(request))
 //                .andExpect(status().isCreated())
@@ -104,7 +106,7 @@
 //                .get("id")
 //                .asText();
 //
-//        mockMvc.perform(get(expensesUrl).with(jwt()))
+//        mockMvc.perform(get(expensesUrl).with(jwt().jwt(token -> token.subject(userId))))
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$[0].id").value(expenseId));
 //

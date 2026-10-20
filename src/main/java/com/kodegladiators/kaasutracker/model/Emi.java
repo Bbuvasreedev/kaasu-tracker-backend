@@ -1,5 +1,6 @@
 package com.kodegladiators.kaasutracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,13 +39,15 @@ public class Emi {
     @Column(name = "due_date_day", nullable = false)
     private Integer dueDateDay;
 
+    @Builder.Default
     @Column(name = "duration_months", nullable = false)
-    private Integer durationMonths;
+    private Integer durationMonths = 12;
 
     @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

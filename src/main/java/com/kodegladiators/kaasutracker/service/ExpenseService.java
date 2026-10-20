@@ -34,7 +34,7 @@ public class ExpenseService {
         this.eventPublisher = eventPublisher;
     }
 
-    public List<ExpenseResource> findAllByUser(Long userId) {
+    public List<ExpenseResource> findAllByUser(String userId) {
         requireUser(userId);
         return expenseRepository.findAllByUserIdOrderByExpenseDateDesc(userId)
                 .stream()
@@ -42,13 +42,13 @@ public class ExpenseService {
                 .toList();
     }
 
-    public ExpenseResource findById(Long userId, Long expenseId) {
+    public ExpenseResource findById(String userId, Long expenseId) {
         requireUser(userId);
         return toResource(findExpense(userId, expenseId));
     }
 
     @Transactional
-    public ExpenseResource create(Long userId, ExpenseDto request) {
+    public ExpenseResource create(String userId, ExpenseDto request) {
         User user = requireUser(userId);
         Expense expense = new Expense();
         apply(expense, request);
@@ -59,7 +59,7 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseResource update(Long userId, Long expenseId, ExpenseDto request) {
+    public ExpenseResource update(String userId, Long expenseId, ExpenseDto request) {
         requireUser(userId);
         Expense expense = findExpense(userId, expenseId);
         apply(expense, request);
@@ -67,22 +67,22 @@ public class ExpenseService {
     }
 
     @Transactional
-    public void delete(Long userId, Long expenseId) {
+    public void delete(String userId, Long expenseId) {
         requireUser(userId);
         expenseRepository.delete(findExpense(userId, expenseId));
     }
 
-    private User requireUser(Long userId) {
+    private User requireUser(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
-    private Expense findExpense(Long userId, Long expenseId) {
+    private Expense findExpense(String userId, Long expenseId) {
         return expenseRepository.findByIdAndUserId(expenseId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
     }
 
-    private void publishExpenseAddedAfterCommit(Long userId, Expense expense) {
+    private void publishExpenseAddedAfterCommit(String userId, Expense expense) {
         ExpenseAddedEvent event = new ExpenseAddedEvent(this, userId, expense.getAmount());
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

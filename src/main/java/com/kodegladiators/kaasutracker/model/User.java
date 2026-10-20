@@ -3,8 +3,6 @@ package com.kodegladiators.kaasutracker.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,6 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @NoArgsConstructor
@@ -31,8 +30,8 @@ import lombok.ToString;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false, updatable = false)
+    private String id;
 
     @Column(nullable = false, length = 254)
     private String email;
@@ -49,12 +48,14 @@ public class User {
     @Column(name = "language_pref", length = 20)
     private String languagePref;
 
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses = new ArrayList<>();
 
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
